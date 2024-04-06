@@ -1,0 +1,7 @@
+boto3
+scikit-learn
+setuptools
+mlflow
+awswrangler
+optuna
+seaborn
