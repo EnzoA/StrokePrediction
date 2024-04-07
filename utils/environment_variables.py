@@ -1,11 +1,11 @@
 from enum import Enum
 
-class S3Paths(Enum):
-    RAW_DATASET = 's3://data/raw/healthcare-dataset-stroke-data.csv'
-    
-class LocalPaths(Enum):
-    DATA_JSON_PATH = 'data_info/data.json'
+class EnvironmentVariables(Enum):
+    RAW_DATASET_URL = 'https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset'
 
-class MlFlowConstants(Enum):
-    BASE_URL = 'http://mlflow:5000'
-    EXPERIMENT_NAME = 'Stroke Prediction'
+    S3_RAW_DATASET = 's3://data/raw/healthcare-dataset-stroke-data.csv'
+    
+    DATA_JSON_LOCAL_PATH = 'data_info/data.json'
+    
+    MLFLOW_BASE_URL = 'http://mlflow:5000'
+    MLFLOW_EXPERIMENT_NAME = 'Stroke Prediction'
