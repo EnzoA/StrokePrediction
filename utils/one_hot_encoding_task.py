@@ -44,8 +44,8 @@ def set_one_hot_encoding_variables():
 
         data_dict = {}
         try:
-            client.head_object(Bucket='data', Key=EnvironmentVariables.DATA_JSON_LOCAL_PATH)
-            result = client.get_object(Bucket='data', Key=EnvironmentVariables.DATA_JSON_LOCAL_PATH)
+            client.head_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON)
+            result = client.get_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON)
             text = result['Body'].read().decode()
             data_dict = json.loads(text)
         except botocore.exceptions.ClientError as e:
@@ -69,7 +69,7 @@ def set_one_hot_encoding_variables():
 
         client.put_object(
             Bucket='data',
-            Key=EnvironmentVariables.DATA_JSON_LOCAL_PATH,
+            Key=EnvironmentVariables.S3_DATA_JSON,
             Body=data_string
         )
 
