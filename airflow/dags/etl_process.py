@@ -7,9 +7,6 @@ from utils.standard_scaler import standard_scaler
 from utils.oversampling import smote_oversampler
 
 
-def hellowWorld():
-    print('Hello World')
-
 with DAG(dag_id="etl_process_dag",
          start_date=datetime(2024,1,1),
          schedule_interval="@daily",
