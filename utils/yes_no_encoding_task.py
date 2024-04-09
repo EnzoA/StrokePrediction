@@ -1,12 +1,6 @@
 # type: ignore
-from airflow.decorators import task
 from utils.environment_variables import EnvironmentVariables
 
-@task.virtualenv(
-        task_id='map_yes_no_encoding_variables',
-        requirements=['awswrangler==3.6.0'],
-        system_site_packages=True
-)
 def map_yes_no_encoding_variables():
     '''
     Maps binary yes-no variables into a numerical 1-0 representation.
