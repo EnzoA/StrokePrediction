@@ -1,12 +1,6 @@
 # type: ignore
-from airflow.decorators import task
 from utils.environment_variables import EnvironmentVariables
 
-@task.virtualenv(
-        task_id='set_one_hot_encoding_variables',
-        requirements=['awswrangler==3.6.0'],
-        system_site_packages=True
-)
 def set_one_hot_encoding_variables():
         '''
         Converts categorical variables into one-hot encoding.
