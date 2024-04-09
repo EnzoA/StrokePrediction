@@ -9,13 +9,15 @@ def standard_scaler(self):
 
         from sklearn.preprocessing import StandardScaler
 
+        from utils.environment_variables import EnvironmentVariables
+
         def save_to_csv(df, path):
             wr.s3.to_csv(df=df,
                          path=path,
                          index=False)
 
-        X_train = wr.s3.read_csv("s3://path_train")
-        X_test = wr.s3.read_csv("s3://path_test")
+        X_train = wr.s3.read_csv(EnvironmentVariables.S3_X_TRAIN)
+        X_test = wr.s3.read_csv(EnvironmentVariables.S3_X_TEST)
 
         sc_X = StandardScaler(with_mean=True, with_std=True)
         X_train_arr = sc_X.fit_transform(X_train)
@@ -24,8 +26,8 @@ def standard_scaler(self):
         X_train = pd.DataFrame(X_train_arr, columns=X_train.columns)
         X_test = pd.DataFrame(X_test_arr, columns=X_test.columns)
 
-        save_to_csv(X_train, "s3://path_X_train.csv")
-        save_to_csv(X_test, "s3://path_X_test.csv")
+        save_to_csv(X_train, EnvironmentVariables.S3_X_TRAIN)
+        save_to_csv(X_test, EnvironmentVariables.S3_X_TEST)
 
         # Save information of the dataset
         client = boto3.client('s3')
@@ -50,7 +52,7 @@ def standard_scaler(self):
             Body=data_string
         )
 
-        mlflow.set_tracking_uri('http://mlflow:5000')
+        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL)
         experiment = mlflow.set_experiment("Stroke")
 
         # Obtain the last experiment run_id to log the new information
