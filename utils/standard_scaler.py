@@ -33,8 +33,8 @@ def standard_scaler(self):
         client = boto3.client('s3')
 
         try:
-            client.head_object(Bucket='data', Key='data_info/data.json')
-            result = client.get_object(Bucket='data', Key='data_info/data.json')
+            client.head_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON)
+            result = client.get_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON)
             text = result["Body"].read().decode()
             data_dict = json.loads(text)
         except botocore.exceptions.ClientError as e:
@@ -48,7 +48,7 @@ def standard_scaler(self):
 
         client.put_object(
             Bucket='data',
-            Key='data_info/data.json',
+            Key=EnvironmentVariables.S3_DATA_JSON,
             Body=data_string
         )
 
