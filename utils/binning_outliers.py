@@ -19,6 +19,5 @@ def binning_outliers():
         X_test['bmi'] = pd.cut(X_test['bmi'], bins = [0, 19, 25, 30, 500], labels = ['Underweight', 'Healthy', 'Overweight', 'Obese'])
         X_test['avg_glucose_level'] = pd.cut(X_test['avg_glucose_level'], bins = [0, 90, 170, 230, 500], labels = ['Low', 'Normal', 'Elevated', 'High'])
 
-
         save_to_csv(X_train, EnvironmentVariables.S3_X_TRAIN)
         save_to_csv(X_test, EnvironmentVariables.S3_X_TEST)
