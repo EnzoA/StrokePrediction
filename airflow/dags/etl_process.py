@@ -5,6 +5,9 @@ from utils.one_hot_encoding_task import set_one_hot_encoding_variables
 from utils.yes_no_encoding_task import map_yes_no_encoding_variables
 from utils.standard_scaler import standard_scaler
 from utils.oversampling import smote_oversampler
+from utils.split import split_dataset
+from utils.bmi_imputation import bmi_imputation
+from utils.binning_outliers import binning_outliers
 
 
 with DAG(dag_id="etl_process_dag",
@@ -14,18 +17,24 @@ with DAG(dag_id="etl_process_dag",
 
         dataset_split = PythonVirtualenvOperator(
               task_id = "train_test_dataset_split",
-              python_callable = some_function #TODO: reemplazar por la funcion verdadera
-            
+              python_callable = split_dataset
+              requirements=["awswrangler==3.6.0",
+                            "scikit-learn==1.3.2"],
+              system_site_packages=True
         )    
         
         bmi_imputation = PythonVirtualenvOperator(
               task_id="bmi_data_imputation",
-              python_callable = some_other_function 
+              python_callable = bmi_imputation,
+              requirements=['awswrangler==3.6.0'],
+              system_site_packages=True
         )
 
         outliers = PythonVirtualenvOperator(
               task_id="binning_outliers", 
-              python_callable = some_other_function_2
+              python_callable = binning_outliers,
+              requirements=['awswrangler==3.6.0'],
+              system_site_packages=True
         )
 
         one_hot_encoding = PythonVirtualenvOperator(
