@@ -5,7 +5,9 @@ from utils.one_hot_encoding_task import set_one_hot_encoding_variables
 from utils.yes_no_encoding_task import map_yes_no_encoding_variables
 from utils.standard_scaler import standard_scaler
 from utils.oversampling import smote_oversampler
-from utils.oversampling import split_dataset
+from utils.split import split_dataset
+from utils.bmi_imputation import bmi_imputation
+from utils.binning_outliers import binning_outliers
 
 
 with DAG(dag_id="etl_process_dag",
