@@ -26,6 +26,7 @@ x-airflow-common: &airflow-common
     - ${AIRFLOW_PROJ_DIR:-./airflow}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-./airflow}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-./airflow}/secrets:/opt/secrets
+    - ${UTILS_PROJ_DIR}:/opt/airflow/dags/utils
   networks:
     - frontend
     - backend
@@ -162,6 +163,8 @@ services:
       - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_ACCESS_KEY:-minio123}
       - MLFLOW_S3_ENDPOINT_URL=http://s3:9000
       - AWS_ENDPOINT_URL_S3=http://s3:9000
+    volumes:
+      - ${UTILS_PROJ_DIR}:/app/utils
     command: >
       uvicorn app:app 
       --host 0.0.0.0

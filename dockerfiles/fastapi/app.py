@@ -1,4 +1,3 @@
-# type: ignore
 import json
 import pickle
 import boto3
@@ -206,7 +205,7 @@ class ModelOutput(BaseModel):
     }
 
 # Load the model before start
-model, version_model, data_dict = load_model('stroke_prediction_model_prod', 'champion')
+#model, version_model, data_dict = load_model('stroke_prediction_model_prod', 'champion')
 
 app = FastAPI()
 
