@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.operators.python import PythonVirtualenvOperator
+from airflow.operators.python_operator import PythonVirtualenvOperator
 from datetime import datetime
 from utils.one_hot_encoding_task import set_one_hot_encoding_variables
 from utils.yes_no_encoding_task import map_yes_no_encoding_variables
@@ -14,10 +14,10 @@ with DAG(dag_id="etl_process_dag",
          start_date=datetime(2024,1,1),
          schedule_interval="@daily",
          catchup=False) as dag:
-
+        
         dataset_split = PythonVirtualenvOperator(
               task_id = "train_test_dataset_split",
-              python_callable = split_dataset
+              python_callable = split_dataset,
               requirements=["awswrangler==3.6.0",
                             "scikit-learn==1.3.2"],
               system_site_packages=True
@@ -71,6 +71,5 @@ with DAG(dag_id="etl_process_dag",
               system_site_packages=True
 
         )
-
 
 dataset_split >> bmi_imputation >> outliers >> one_hot_encoding >> yes_no_encoding >> data_scaling >> smote_oversampling
