@@ -1,6 +1,6 @@
 from utils.environment_variables import EnvironmentVariables
 
-def bmi_imputation():
+def impute_bmi():
         import awswrangler as wr
         from sklearn.impute import SimpleImputer
 

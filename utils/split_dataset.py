@@ -24,7 +24,7 @@ def split_dataset():
             random_state=42
         )
 
-        wr.s3.to_csv(X_train, EnvironmentVariables.S3_X_TRAIN,index=False)
-        wr.s3.to_csv(X_test, EnvironmentVariables.S3_X_TEST,index=False)
-        wr.s3.to_csv(Y_train, EnvironmentVariables.S3_Y_TRAIN,index=False)
-        wr.s3.to_csv(Y_test, EnvironmentVariables.S3_Y_TEST,index=False)
+        wr.s3.to_csv(X_train, EnvironmentVariables.S3_X_TRAIN, index=False)
+        wr.s3.to_csv(X_test, EnvironmentVariables.S3_X_TEST, index=False)
+        wr.s3.to_csv(Y_train, EnvironmentVariables.S3_Y_TRAIN, index=False)
+        wr.s3.to_csv(Y_test, EnvironmentVariables.S3_Y_TEST, index=False)

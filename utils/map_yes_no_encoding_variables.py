@@ -1,4 +1,3 @@
-# type: ignore
 from utils.environment_variables import EnvironmentVariables
 
 def map_yes_no_encoding_variables():
@@ -15,7 +14,6 @@ def map_yes_no_encoding_variables():
     import pandas as pd
     import numpy as np
 
-    # TODO: En este punto del dag, la ruta probablemente sea la de un dataset parcialmente preprocesado, no la del raw.
     dataset = wr.s3.read_csv(EnvironmentVariables.S3_RAW_DATASET)
 
     column_to_map = 'ever_married'
@@ -59,11 +57,11 @@ def map_yes_no_encoding_variables():
     target_col = 'stroke'
 
     mlflow_dataset = mlflow.data.from_pandas(dataset,
-                                             source=EnvironmentVariables.RAW_DATASET_URL,
+                                             source=EnvironmentVariables.S3_RAW_DATASET,
                                              targets=target_col,
                                              name='stroke_data_complete')
     mlflow_dataset_one_hot_encoding = mlflow.data.from_pandas(dataset,
-                                                              source=EnvironmentVariables.RAW_DATASET_URL,
+                                                              source=EnvironmentVariables.S3_RAW_DATASET,
                                                               targets=target_col,
                                                               name='stroke_data_complete_with_one_hot_encoding')
     mlflow.log_input(mlflow_dataset, context='Dataset')

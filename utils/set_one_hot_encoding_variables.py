@@ -78,11 +78,11 @@ def set_one_hot_encoding_variables():
         target_col = 'stroke'
 
         mlflow_dataset = mlflow.data.from_pandas(dataset,
-                                                 source=EnvironmentVariables.RAW_DATASET_URL,
+                                                 source=EnvironmentVariables.S3_RAW_DATASET,
                                                  targets=target_col,
                                                  name='stroke_data_complete')
         mlflow_dataset_yes_no_encoding = mlflow.data.from_pandas(dataset,
-                                                                 source=EnvironmentVariables.RAW_DATASET_URL,
+                                                                 source=EnvironmentVariables.S3_RAW_DATASET,
                                                                  targets=target_col,
                                                                  name='stroke_data_complete_with_yes_no_encoding')
         mlflow.log_input(mlflow_dataset, context='Dataset')

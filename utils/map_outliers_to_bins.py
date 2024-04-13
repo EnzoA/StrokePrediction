@@ -1,6 +1,6 @@
 from utils.environment_variables import EnvironmentVariables
 
-def binning_outliers():
+def map_outliers_to_bins():
         import awswrangler as wr
         import pandas as pd
 

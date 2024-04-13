@@ -1,4 +1,4 @@
-def standard_scaler(self):
+def apply_standard_scaling(self):
         import json
         import mlflow
         import boto3
