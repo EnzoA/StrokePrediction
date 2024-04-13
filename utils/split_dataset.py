@@ -1,8 +1,7 @@
-from utils.environment_variables import EnvironmentVariables
-
 def split_dataset():
         import awswrangler as wr
         from sklearn.model_selection import train_test_split
+        from utils.environment_variables import EnvironmentVariables
         
         dataset = wr.s3.read_csv(EnvironmentVariables.S3_RAW_DATASET)
         

@@ -1,9 +1,7 @@
-from utils.environment_variables import EnvironmentVariables
-
 def map_outliers_to_bins():
         import awswrangler as wr
         import pandas as pd
-
+        from utils.environment_variables import EnvironmentVariables
 
         X_train = wr.s3.read_csv(EnvironmentVariables.S3_X_TRAIN)
         X_test = wr.s3.read_csv(EnvironmentVariables.S3_X_TEST)

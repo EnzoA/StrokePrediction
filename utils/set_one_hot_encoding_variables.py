@@ -1,10 +1,9 @@
-# type: ignore
-from utils.environment_variables import EnvironmentVariables
-
 def set_one_hot_encoding_variables():
         '''
         Converts categorical variables into one-hot encoding.
         '''
+        from utils.environment_variables import EnvironmentVariables
+
         import json
         import datetime
         import boto3

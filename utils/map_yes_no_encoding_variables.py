@@ -1,9 +1,9 @@
-from utils.environment_variables import EnvironmentVariables
-
 def map_yes_no_encoding_variables():
     '''
     Maps binary yes-no variables into a numerical 1-0 representation.
     '''
+    from utils.environment_variables import EnvironmentVariables
+
     import json
     import datetime
     import boto3

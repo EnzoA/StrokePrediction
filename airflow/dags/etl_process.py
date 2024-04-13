@@ -18,7 +18,7 @@ with DAG(dag_id='etl_process_dag',
         get_raw_dataset_task = PythonVirtualenvOperator(
               task_id='get_raw_dataset',
               python_callable=get_raw_dataset,
-              requirements=[],
+              requirements=['awswrangler==3.6.0'],
               system_site_packages=True
         )
 
