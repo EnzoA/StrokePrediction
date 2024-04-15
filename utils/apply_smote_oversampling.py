@@ -1,4 +1,4 @@
-def smote_oversampler(self):
+def apply_smote_oversampling(self):
     import awswrangler as wr
     import pandas as pd
 

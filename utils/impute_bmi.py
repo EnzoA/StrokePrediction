@@ -1,8 +1,7 @@
-from utils.environment_variables import EnvironmentVariables
-
-def bmi_imputation():
+def impute_bmi():
         import awswrangler as wr
         from sklearn.impute import SimpleImputer
+        from utils.environment_variables import EnvironmentVariables
 
         X_train = wr.s3.read_csv(EnvironmentVariables.S3_X_TRAIN)
         imp_median = SimpleImputer(strategy='median')
