@@ -9,6 +9,8 @@ from utils.apply_smote_oversampling import apply_smote_oversampling
 from utils.split_dataset import split_dataset
 from utils.impute_bmi import impute_bmi
 from utils.map_outliers_to_bins import map_outliers_to_bins
+from utils.environment_variables import EnvironmentVariables
+from airflow.models.baseoperator import chain
 
 with DAG(dag_id='etl_process_dag',
          start_date=datetime(2024, 1, 1),
@@ -37,26 +39,75 @@ with DAG(dag_id='etl_process_dag',
               system_site_packages=True
         )
 
-        map_outliers_to_bins_task = PythonVirtualenvOperator(
-              task_id='map_outliers_to_bins', 
+        map_outliers_to_bins_training_task= PythonVirtualenvOperator(
+              task_id='map_outliers_to_bins_training_data',
               python_callable=map_outliers_to_bins,
-              requirements=['awswrangler==3.6.0'],
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TRAIN.value},
+              requirements=['awswrangler==3.6.0'],  # Add any additional requirements here
               system_site_packages=True
+              #provide_context=True,
         )
 
-        set_one_hot_encoding_variables_task = PythonVirtualenvOperator(
-              task_id='set_one_hot_encoding_variables', 
+        map_outliers_to_bins_testing_task = PythonVirtualenvOperator(
+              task_id='map_outliers_to_bins_testing_data',
+              python_callable=map_outliers_to_bins,
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TEST.value},
+              requirements=["awswrangler"],  # Add any additional requirements here
+              system_site_packages=True
+              #provide_context=True,
+        )
+
+        #map_outliers_to_bins_task = PythonVirtualenvOperator(
+        #      task_id='map_outliers_to_bins', 
+        #      python_callable=map_outliers_to_bins,
+        #      requirements=['awswrangler==3.6.0'],
+        #      system_site_packages=True
+        #)
+        set_one_hot_encoding_training_variables_task = PythonVirtualenvOperator(
+              task_id='one_hot_encoding_training_variables', 
               python_callable=set_one_hot_encoding_variables,
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TRAIN.value, 'dataset_type': 'training'},
               requirements=['awswrangler==3.6.0'],
               system_site_packages=True
         )
 
-        map_yes_no_encoding_variables_task = PythonVirtualenvOperator(
-              task_id='map_yes_no_encoding_variables',
-              python_callable=map_yes_no_encoding_variables,
+        set_one_hot_encoding_testing_variables_task = PythonVirtualenvOperator(
+              task_id='one_hot_encoding_testing_variables', 
+              python_callable=set_one_hot_encoding_variables,
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TEST.value, 'dataset_type': 'testing'},
               requirements=['awswrangler==3.6.0'],
               system_site_packages=True
         )
+
+        #set_one_hot_encoding_variables_task = PythonVirtualenvOperator(
+        #      task_id='set_one_hot_encoding_variables', 
+        #      python_callable=set_one_hot_encoding_variables,
+        #      requirements=['awswrangler==3.6.0'],
+        #      system_site_packages=True
+        #)
+
+        map_yes_no_encoding_training_variables_task = PythonVirtualenvOperator(
+              task_id='yes_no_encoding_training_variables', 
+              python_callable=map_yes_no_encoding_variables,
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TRAIN.value, 'dataset_type': 'training'},
+              requirements=['awswrangler==3.6.0'],
+              system_site_packages=True
+        )
+
+        map_yes_no_encoding_testing_variables_task = PythonVirtualenvOperator(
+              task_id='yes_no_encoding_testing_variables', 
+              python_callable=map_yes_no_encoding_variables,
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TEST.value, 'dataset_type': 'testing'},
+              requirements=['awswrangler==3.6.0'],
+              system_site_packages=True
+        )
+
+        #map_yes_no_encoding_variables_task = PythonVirtualenvOperator(
+        #      task_id='map_yes_no_encoding_variables',
+        #      python_callable=map_yes_no_encoding_variables,
+        #      requirements=['awswrangler==3.6.0'],
+        #      system_site_packages=True
+        #)
 
         apply_standard_scaling_task = PythonVirtualenvOperator(
               task_id='apply_standard_scaling',
@@ -75,11 +126,14 @@ with DAG(dag_id='etl_process_dag',
               system_site_packages=True
         )
 
-(get_raw_dataset_task
- >> dataset_split_task
- >> impute_bmi_task
- >> map_outliers_to_bins_task
- >> set_one_hot_encoding_variables_task
- >> map_yes_no_encoding_variables_task
- >> apply_standard_scaling_task
- >> apply_smote_oversampling_task)
+
+chain(get_raw_dataset_task, 
+      dataset_split_task, 
+      impute_bmi_task, 
+      [map_outliers_to_bins_training_task, map_outliers_to_bins_testing_task], 
+      [set_one_hot_encoding_training_variables_task, set_one_hot_encoding_testing_variables_task],
+      [map_yes_no_encoding_training_variables_task, map_yes_no_encoding_testing_variables_task],
+      apply_standard_scaling_task, 
+      apply_smote_oversampling_task
+      )
+
