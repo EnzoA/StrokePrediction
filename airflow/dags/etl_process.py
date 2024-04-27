@@ -14,7 +14,7 @@ from airflow.models.baseoperator import chain
 
 with DAG(dag_id='etl_process_dag',
          start_date=datetime(2024, 1, 1),
-         schedule_interval='@daily',
+         schedule_interval=None,
          max_active_runs=1,
          catchup=False) as dag:
 
