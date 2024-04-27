@@ -33,15 +33,15 @@ def load_model(model_name: str, alias: str):
 
     try:
         # Load the trained model from MLflow
-        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL)
+        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL.value)
         client_mlflow = mlflow.MlflowClient()
 
         model_data_mlflow = client_mlflow.get_model_version_by_alias(model_name, alias)
         model_ml = mlflow.sklearn.load_model(model_data_mlflow.source)
         version_model_ml = int(model_data_mlflow.version)
-    except:
+    except Exception:
         # If there is no registry in MLflow, open the default model
-        file_ml = open(EnvironmentVariables.MODEL_PKL_LOCAL_PATH, 'rb')
+        file_ml = open(EnvironmentVariables.MODEL_PKL_LOCAL_PATH.value, 'rb')
         model_ml = pickle.load(file_ml)
         file_ml.close()
         version_model_ml = 0
@@ -50,8 +50,8 @@ def load_model(model_name: str, alias: str):
         # Load information of the ETL pipeline from S3
         s3 = boto3.client('s3')
 
-        s3.head_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON)
-        result_s3 = s3.get_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON)
+        s3.head_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON.value)
+        result_s3 = s3.get_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON.value)
         text_s3 = result_s3['Body'].read().decode()
         data_dictionary = json.loads(text_s3)
 
@@ -60,7 +60,7 @@ def load_model(model_name: str, alias: str):
         data_dictionary['standard_scaler_std'] = np.array(data_dictionary['standard_scaler_std'])
     except:
         # If data dictionary is not found in S3, load it from local file
-        file_s3 = open(EnvironmentVariables.DATA_JSON_LOCAL_PATH, 'r')
+        file_s3 = open(EnvironmentVariables.DATA_JSON_LOCAL_PATH.value, 'r')
         data_dictionary = json.load(file_s3)
         file_s3.close()
 
@@ -81,10 +81,10 @@ def check_model():
     global version_model
 
     try:
-        model_name = 'stroke_prediction_model_prod'
+        model_name = EnvironmentVariables.MLFLOW_MODEL_NAME_PROD.value
         alias = 'champion'
 
-        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL)
+        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL.value)
         client = mlflow.MlflowClient()
 
         # Check in the model registry if the version of the champion has changed
@@ -205,7 +205,7 @@ class ModelOutput(BaseModel):
     }
 
 # Load the model before start
-#model, version_model, data_dict = load_model('stroke_prediction_model_prod', 'champion')
+model, version_model, data_dict = load_model(EnvironmentVariables.MLFLOW_MODEL_NAME_PROD.value, 'champion')
 
 app = FastAPI()
 
