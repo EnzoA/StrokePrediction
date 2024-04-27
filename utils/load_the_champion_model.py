@@ -3,6 +3,7 @@ def load_the_champion_model():
     from utils.environment_variables import EnvironmentVariables
 
     try:
+        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL.value)
         client = mlflow.MlflowClient()
         model_name = f'{EnvironmentVariables.MLFLOW_MODEL_NAME.value}_prod'
         alias = 'champion'
@@ -10,5 +11,4 @@ def load_the_champion_model():
         champion_version = mlflow.sklearn.load_model(model_data.source)
         return champion_version
     except mlflow.exceptions.MlflowException as ex:
-        print('EXCEPTION AL CARGAR MODELO CHAMPION ', ex)
         return None

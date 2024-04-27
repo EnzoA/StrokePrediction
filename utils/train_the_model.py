@@ -52,7 +52,7 @@ def train_the_model():
         y_pred = model.predict(X_train)
 
         artifact_path = 'model'
-        signature = infer_signature(X_test, model.predict(X_train))
+        signature = infer_signature(X_train, model.predict(X_train))
         mlflow.sklearn.log_model(
             sk_model=model,
             artifact_path=artifact_path,
