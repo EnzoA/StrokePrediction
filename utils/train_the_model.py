@@ -58,22 +58,24 @@ def train_the_model():
             artifact_path=artifact_path,
             signature=signature,
             serialization_format='cloudpickle',
-            registered_model_name=EnvironmentVariables.MLFLOW_MODEL_NAME.value,
+            registered_model_name=EnvironmentVariables.MLFLOW_MODEL_NAME.value + '_dev',
             metadata={ 'model_data_version': 1 }
         )
-
-        tags = model.get_params()
-        tags['model'] = type(model).__name__
-        tags['f1-score'] = f1_score
         model_uri = mlflow.get_artifact_uri(artifact_path)
 
-        client = mlflow.MlflowClient()
-        
-        model_version = client.create_model_version(
-            name=EnvironmentVariables.MLFLOW_MODEL_NAME,
-            source=model_uri,
-            run_id=model_uri.split("/")[-3],
-            tags=tags
-        )
+    client = mlflow.MlflowClient()
+    registered_model_name = f'{EnvironmentVariables.MLFLOW_MODEL_NAME.value}_prod'
+    client.create_registered_model(name=registered_model_name, description='This classifier detects if a person will have a stroke or not')
 
-        client.set_registered_model_alias(EnvironmentVariables.MLFLOW_MODEL_NAME.value, 'champion', model_version)
+    tags = model.get_params()
+    tags['model'] = type(model).__name__
+    tags['f1-score'] = f1_score
+
+    model_version = client.create_model_version(
+        name=registered_model_name,
+        source=model_uri,
+        run_id=model_uri.split('/')[-3],
+        tags=tags
+    )
+
+    client.set_registered_model_alias(registered_model_name, 'champion', model_version.version)

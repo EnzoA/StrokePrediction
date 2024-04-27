@@ -9,6 +9,7 @@ from utils.train_the_challenger_model import train_the_challenger_model
 with DAG(dag_id='train_the_model',
          start_date=datetime(2024, 1, 1),
          schedule_interval='@daily',
+         max_active_runs=1,
          catchup=False) as dag:
     
     decide_if_first_train_task = BranchPythonOperator(
