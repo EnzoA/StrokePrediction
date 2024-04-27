@@ -40,11 +40,14 @@ def set_one_hot_encoding_variables(s3_path, dataset_type):
                 # Something else has gone wrong.
                 raise e
 
-        data_dict['columns_after_one_hot_encoding'] = dataset.columns.to_list()
+        data_dict['columns_one_hot_encoded'] = dataset.columns.to_list()
 
+        categories_list = dataset.columns.to_list()
         category_dummies_dict = {}
+        for category in categories_list:
+            category_dummies_dict[category] = np.sort(dataset[category].unique()).tolist()
 
-        data_dict['categories_values_per_categorical'] = category_dummies_dict
+        data_dict['dummy_values_per_one_hot_encoded'] = category_dummies_dict
 
         data_dict['date'] = datetime.datetime.today().strftime('%Y/%m/%d-%H:%M:%S"')
         data_string = json.dumps(data_dict, indent=2)

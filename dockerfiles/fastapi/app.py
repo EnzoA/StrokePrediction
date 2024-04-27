@@ -240,17 +240,15 @@ def predict(
     # Convert features into a pandas DataFrame
     features_df = pd.DataFrame(np.array(features_list).reshape([1, -1]), columns=features_key)
 
-    # TODO: Actualizar acorde al dataset.
-
-    # Process categorical features
-    for categorical_col in data_dict['categorical_columns']:
-        features_df[categorical_col] = features_df[categorical_col].astype(int)
-        categories = data_dict['categories_values_per_categorical'][categorical_col]
-        features_df[categorical_col] = pd.Categorical(features_df[categorical_col], categories=categories)
+    # Process one-hot ecoded features
+    for one_hot_ecoded_col in data_dict['columns_one_hot_encoded']:
+        features_df[one_hot_ecoded_col] = features_df[one_hot_ecoded_col].astype(int)
+        categories = data_dict['dummy_values_per_one_hot_encoded'][one_hot_ecoded_col]
+        features_df[one_hot_ecoded_col] = pd.Categorical(features_df[one_hot_ecoded_col], categories=categories)
 
     # Convert categorical features into dummy variables
     features_df = pd.get_dummies(data=features_df,
-                                 columns=data_dict['categorical_columns'],
+                                 columns=data_dict['columns_one_hot_encoded'],
                                  drop_first=True)
 
     # Reorder DataFrame columns
