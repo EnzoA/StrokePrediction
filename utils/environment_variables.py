@@ -17,3 +17,4 @@ class EnvironmentVariables(Enum):
     
     MLFLOW_BASE_URL = 'http://mlflow:5000'
     MLFLOW_EXPERIMENT_NAME = 'Stroke Prediction'
+    MLFLOW_MODEL_NAME = 'stroke_model'
