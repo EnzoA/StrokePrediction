@@ -9,7 +9,7 @@ def train_the_challenger_model():
 
     def register_challenger(model, f1_score, model_uri):
         client = mlflow.MlflowClient()
-        name = EnvironmentVariables.MLFLOW_MODEL_NAME.value
+        name = EnvironmentVariables.MLFLOW_MODEL_NAME_PROD.value
 
         # Save the model params as tags
         tags = model.get_params()

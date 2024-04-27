@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.operators.python_operator import PythonVirtualenvOperatordatetime
+from airflow.operators.python_operator import PythonVirtualenvOperator
 from utils.get_raw_dataset import get_raw_dataset
 from utils.set_one_hot_encoding_variables import set_one_hot_encoding_variables
 from utils.map_yes_no_encoding_variables import map_yes_no_encoding_variables

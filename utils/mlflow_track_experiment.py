@@ -25,7 +25,7 @@ def mlflow_track_experiment(model, X):
         artifact_path=artifact_path,
         signature=signature,
         serialization_format='cloudpickle',
-        registered_model_name=EnvironmentVariables.MLFLOW_MODEL_NAME.value,
+        registered_model_name=EnvironmentVariables.MLFLOW_MODEL_NAME_PROD.value,
         metadata={ 'model_data_version': 1 }
     )
 

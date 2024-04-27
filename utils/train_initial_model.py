@@ -1,4 +1,4 @@
-def train_the_model():
+def train_initial_model():
     # Librerías
     import mlflow
     from mlflow.models import infer_signature
@@ -7,20 +7,13 @@ def train_the_model():
     # Modelos
     from sklearn.linear_model import LogisticRegression
     from sklearn.model_selection import GridSearchCV
-
-    # Selección de features
-    from sklearn.feature_selection import VarianceThreshold
     
     # Métricas
     from sklearn.metrics import (
         accuracy_score,
         precision_score,
         recall_score,
-        f1_score,
-        classification_report,
-        confusion_matrix,
-        ConfusionMatrixDisplay,
-        roc_auc_score, roc_curve)
+        f1_score)
 
     # Utils locales
     from utils.get_or_create_experiment import get_or_create_experiment
@@ -49,7 +42,16 @@ def train_the_model():
             param_grid=logistic_regression_params
         )
         model.fit(X_train, y_train)
-        y_pred = model.predict(X_train)
+        y_pred = model.predict(X_test)
+
+        accuracy = accuracy_score(y_test, y_pred)
+        precision = precision_score(y_test, y_pred)
+        recall = recall_score(y_test, y_pred)
+        f1 = f1_score(y_test, y_pred)
+        mlflow.log_metric('test_accuracy', accuracy)
+        mlflow.log_metric('test_precision', precision)
+        mlflow.log_metric('test_recall', recall)
+        mlflow.log_metric('test_f1', f1)
 
         artifact_path = 'model'
         signature = infer_signature(X_train, model.predict(X_train))
@@ -58,13 +60,13 @@ def train_the_model():
             artifact_path=artifact_path,
             signature=signature,
             serialization_format='cloudpickle',
-            registered_model_name=EnvironmentVariables.MLFLOW_MODEL_NAME.value + '_dev',
+            registered_model_name=EnvironmentVariables.MLFLOW_MODEL_NAME_DEV.value,
             metadata={ 'model_data_version': 1 }
         )
         model_uri = mlflow.get_artifact_uri(artifact_path)
 
     client = mlflow.MlflowClient()
-    registered_model_name = f'{EnvironmentVariables.MLFLOW_MODEL_NAME.value}_prod'
+    registered_model_name = EnvironmentVariables.MLFLOW_MODEL_NAME_PROD.value
     client.create_registered_model(name=registered_model_name, description='This classifier detects if a person will have a stroke or not')
 
     tags = model.get_params()
