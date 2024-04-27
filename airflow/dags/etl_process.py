@@ -44,18 +44,18 @@ with DAG(dag_id='etl_process_dag',
               task_id='map_outliers_to_bins_training_data',
               python_callable=map_outliers_to_bins,
               op_kwargs={'s3_path': EnvironmentVariables.S3_X_TRAIN.value},
-              requirements=['awswrangler==3.6.0'],  # Add any additional requirements here
+              requirements=['awswrangler==3.6.0'],
               system_site_packages=True
-              #provide_context=True,
+
         )
 
         map_outliers_to_bins_testing_task = PythonVirtualenvOperator(
               task_id='map_outliers_to_bins_testing_data',
               python_callable=map_outliers_to_bins,
               op_kwargs={'s3_path': EnvironmentVariables.S3_X_TEST.value},
-              requirements=["awswrangler"],  # Add any additional requirements here
+              requirements=["awswrangler"],
               system_site_packages=True
-              #provide_context=True,
+
         )
 
         set_one_hot_encoding_training_variables_task = PythonVirtualenvOperator(

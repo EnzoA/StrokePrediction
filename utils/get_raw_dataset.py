@@ -12,5 +12,4 @@ def get_raw_dataset():
         raw_dataset = pd.read_csv(EnvironmentVariables.RAW_DATASET_PATH.value)
         
         wr.s3.to_csv(raw_dataset, EnvironmentVariables.S3_RAW_DATASET.value, index=False)
-        print(f'El dataset crudo fue correctamente persistido en la ruta {EnvironmentVariables.S3_RAW_DATASET.value}')
-        
+        print(f'El dataset crudo fue correctamente persistido en la ruta {EnvironmentVariables.S3_RAW_DATASET.value}')   

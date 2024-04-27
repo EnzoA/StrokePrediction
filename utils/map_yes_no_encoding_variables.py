@@ -8,8 +8,6 @@ def map_yes_no_encoding_variables(s3_path, dataset_type):
     import datetime
     import boto3
     import botocore.exceptions
-    import mlflow
-
     import awswrangler as wr
     import pandas as pd
     import numpy as np

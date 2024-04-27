@@ -2,7 +2,6 @@ def apply_standard_scaling():
         import json
         import boto3
         import botocore.exceptions
-
         import awswrangler as wr
         import pandas as pd
 

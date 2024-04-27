@@ -7,7 +7,6 @@ def set_one_hot_encoding_variables(s3_path, dataset_type):
         import datetime
         import boto3
         import botocore.exceptions
-
         import awswrangler as wr
         import pandas as pd
         import numpy as np

@@ -1,10 +1,5 @@
-import pandas as pd
-from airflow.decorators import dag, task
-from airflow.operators.python_operator import PythonVirtualenvOperator
 from utils.environment_variables import EnvironmentVariables
 
-
-    
 
 def map_outliers_to_bins(s3_path):
         import awswrangler as wr
