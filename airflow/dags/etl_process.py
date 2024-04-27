@@ -15,6 +15,7 @@ from airflow.models.baseoperator import chain
 with DAG(dag_id='etl_process_dag',
          start_date=datetime(2024, 1, 1),
          schedule_interval='@daily',
+         max_active_runs=1,
          catchup=False) as dag:
 
         get_raw_dataset_task = PythonVirtualenvOperator(
@@ -43,26 +44,18 @@ with DAG(dag_id='etl_process_dag',
               task_id='map_outliers_to_bins_training_data',
               python_callable=map_outliers_to_bins,
               op_kwargs={'s3_path': EnvironmentVariables.S3_X_TRAIN.value},
-              requirements=['awswrangler==3.6.0'],  # Add any additional requirements here
+              requirements=['awswrangler==3.6.0'],
               system_site_packages=True
-              #provide_context=True,
         )
 
         map_outliers_to_bins_testing_task = PythonVirtualenvOperator(
               task_id='map_outliers_to_bins_testing_data',
               python_callable=map_outliers_to_bins,
               op_kwargs={'s3_path': EnvironmentVariables.S3_X_TEST.value},
-              requirements=["awswrangler"],  # Add any additional requirements here
+              requirements=["awswrangler"],
               system_site_packages=True
-              #provide_context=True,
         )
 
-        #map_outliers_to_bins_task = PythonVirtualenvOperator(
-        #      task_id='map_outliers_to_bins', 
-        #      python_callable=map_outliers_to_bins,
-        #      requirements=['awswrangler==3.6.0'],
-        #      system_site_packages=True
-        #)
         set_one_hot_encoding_training_variables_task = PythonVirtualenvOperator(
               task_id='one_hot_encoding_training_variables', 
               python_callable=set_one_hot_encoding_variables,
@@ -79,13 +72,6 @@ with DAG(dag_id='etl_process_dag',
               system_site_packages=True
         )
 
-        #set_one_hot_encoding_variables_task = PythonVirtualenvOperator(
-        #      task_id='set_one_hot_encoding_variables', 
-        #      python_callable=set_one_hot_encoding_variables,
-        #      requirements=['awswrangler==3.6.0'],
-        #      system_site_packages=True
-        #)
-
         map_yes_no_encoding_training_variables_task = PythonVirtualenvOperator(
               task_id='yes_no_encoding_training_variables', 
               python_callable=map_yes_no_encoding_variables,
@@ -101,13 +87,6 @@ with DAG(dag_id='etl_process_dag',
               requirements=['awswrangler==3.6.0'],
               system_site_packages=True
         )
-
-        #map_yes_no_encoding_variables_task = PythonVirtualenvOperator(
-        #      task_id='map_yes_no_encoding_variables',
-        #      python_callable=map_yes_no_encoding_variables,
-        #      requirements=['awswrangler==3.6.0'],
-        #      system_site_packages=True
-        #)
 
         apply_standard_scaling_task = PythonVirtualenvOperator(
               task_id='apply_standard_scaling',

@@ -1,14 +1,11 @@
 def apply_standard_scaling():
         import json
-        import mlflow
         import boto3
         import botocore.exceptions
-
         import awswrangler as wr
         import pandas as pd
 
         from sklearn.preprocessing import StandardScaler
-
         from utils.environment_variables import EnvironmentVariables
 
         def save_to_csv(df, path):
@@ -51,18 +48,3 @@ def apply_standard_scaling():
             Key=EnvironmentVariables.S3_DATA_JSON.value,
             Body=data_string
         )
-
-        #mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL.value)
-        #experiment = mlflow.set_experiment("Stroke")
-
-        # Obtain the last experiment run_id to log the new information
-        #list_run = mlflow.search_runs([experiment.experiment_id], output_format="list")
-
-        #with mlflow.start_run(run_id=list_run[0].info.run_id):
-
-        #    mlflow.log_param("Train observations", X_train.shape[0])
-        #    mlflow.log_param("Test observations", X_test.shape[0])
-        #    mlflow.log_param("Standard Scaler feature names", sc_X.feature_names_in_)
-        #    mlflow.log_param("Standard Scaler mean values", sc_X.mean_)
-        #    mlflow.log_param("Standard Scaler scale values", sc_X.scale_)
-

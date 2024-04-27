@@ -7,8 +7,6 @@ def set_one_hot_encoding_variables(s3_path, dataset_type):
         import datetime
         import boto3
         import botocore.exceptions
-        import mlflow
-
         import awswrangler as wr
         import pandas as pd
         import numpy as np
@@ -46,8 +44,6 @@ def set_one_hot_encoding_variables(s3_path, dataset_type):
         data_dict['columns_after_one_hot_encoding'] = dataset.columns.to_list()
 
         category_dummies_dict = {}
-        #for column in columns_to_encode:
-        #    category_dummies_dict[column] = np.sort(dataset[column].unique()).tolist()
 
         data_dict['categories_values_per_categorical'] = category_dummies_dict
 
@@ -59,25 +55,3 @@ def set_one_hot_encoding_variables(s3_path, dataset_type):
             Key=EnvironmentVariables.S3_DATA_JSON.value,
             Body=data_string
         )
-
-        #mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL.value)
-        #experiment = mlflow.set_experiment(EnvironmentVariables.MLFLOW_EXPERIMENT_NAME.value)
-
-        #mlflow.start_run(run_name='ETL_run_' + datetime.datetime.today().strftime('%Y/%m/%d-%H:%M:%S"'),
-        #                 experiment_id=experiment.experiment_id,
-        #                 tags={'experiment': 'etl', 'dataset': EnvironmentVariables.MLFLOW_EXPERIMENT_NAME.value},
-        #                 log_system_metrics=True)
-
-        #target_col = 'stroke'
-
-        #mlflow_dataset = mlflow.data.from_pandas(dataset,
-        #                                         source=s3_path,
-        #                                         targets=target_col,
-        #                                         name=f'stroke_{dataset_type}_data_complete')
-        #mlflow_dataset_yes_no_encoding = mlflow.data.from_pandas(dataset,
-        #                                                         source=s3_path,
-        #                                                         targets=target_col,
-        #                                                         name=f'stroke_{dataset_type}_data_complete_with_yes_no_encoding')
-        #mlflow.log_input(mlflow_dataset, context='Dataset')
-        #mlflow.log_input(mlflow_dataset_yes_no_encoding, context='Dataset') #TODO: cambiar, esta mal el dataset
-    
