@@ -240,6 +240,10 @@ def predict(
     # Convert features into a pandas DataFrame
     features_df = pd.DataFrame(np.array(features_list).reshape([1, -1]), columns=features_key)
 
+    # map yes no columns
+    for column_to_map in data_dict['yes_no_encoding_columns']: 
+        features_df[column_to_map] = features_df[column_to_map].map({ 'Yes': 1, 'No': 0 })
+
     # Process one-hot ecoded features
     for one_hot_ecoded_col in data_dict['columns_one_hot_encoded']:
         features_df[one_hot_ecoded_col] = features_df[one_hot_ecoded_col].astype(int)
