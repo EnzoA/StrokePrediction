@@ -312,9 +312,6 @@ def predict(
     # Scale the data using standard scaler
     features_df = (features_df - data_dict['standard_scaler_mean']) / data_dict['standard_scaler_std']
 
-    print('DATAFRAME COLUMNS', features_df.columns)
-    print('DATAFRAME VALUES', features_df.iloc[0].values)
-
     # Make the prediction using the trained model
     prediction = model.predict(features_df)
 
