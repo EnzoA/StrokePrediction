@@ -55,7 +55,6 @@ def load_model(model_name: str, alias: str):
         text_s3 = result_s3['Body'].read().decode()
         data_dictionary = json.loads(text_s3)
 
-        # TODO: Se necesita esto? Estará disponible?
         data_dictionary['standard_scaler_mean'] = np.array(data_dictionary['standard_scaler_mean'])
         data_dictionary['standard_scaler_std'] = np.array(data_dictionary['standard_scaler_std'])
     except:
@@ -99,6 +98,56 @@ def check_model():
     except:
         # If an error occurs during the process, pass silently
         pass
+
+# TODO: Esto no debería ser manejado acá y menos con este código. Debería ser setteado y luego leído en el data.json de S3.
+def map_feature_value(feature, value):
+    feature = str.lower(feature)
+    if feature == 'gender':
+        value = str.lower(value)
+        if value == 'female':
+            return [1, 0]
+        else:
+            return [0, 1]
+    elif feature == 'work_type':
+        value = str.lower(value)
+        if value == 'govt_job':
+            return [1, 0, 0, 0]
+        elif value == 'private':
+            return [0, 1, 0, 0]
+        elif value == 'self-employed':
+            return [0, 0, 1, 0]
+        elif value == 'children':
+            return [0, 0, 0, 1]
+    elif feature == 'smoking_status':
+        value = str.lower(value)
+        if value == 'formerly smoked':
+            return [1, 0, 0]
+        elif value == 'never smoked':
+            return [0, 1, 0]
+        elif value == 'status_smokes':
+            return [0, 0, 1]
+    elif feature == 'residence_type':
+        value = str.lower(value)
+        if value == 'urban':
+            return [1]
+        else:
+            return [0]
+    elif feature == 'bmi':
+        value = float(value)
+        if value > 30:
+            return [1, 0, 0]
+        elif value >= 25 and value <= 30:
+            return [0, 1, 0]
+        else:
+            return [0, 0, 1]
+    elif feature == 'avg_glucose_level':
+        value = float(value)
+        if value > 230:
+            return [1, 0, 0]
+        elif value < 90:
+            return [0, 1, 0]
+        else:
+            return [0, 0, 1]
 
 class ModelInput(BaseModel):
     '''
@@ -242,28 +291,29 @@ def predict(
 
     # map yes no columns
     for column_to_map in data_dict['yes_no_encoding_columns']: 
-        features_df[column_to_map] = features_df[column_to_map].map({ 'Yes': 1, 'No': 0 })
+        features_df[column_to_map] = features_df[column_to_map].map({ True: 1, False: 0 })
 
     # Process one-hot ecoded features
     for one_hot_ecoded_col in data_dict['columns_to_encode']:
-        one_hot_encoded_cols = data_dict['columns_one_hot_encoded_categories'][one_hot_ecoded_col]
-        features_df = pd.concat([features_df, pd.DataFrame([], one_hot_encoded_cols)], axis=1)
-
-    print('DATAFRAME!!!', features_df.columns)
+        one_hot_ecoded_col_low = str.lower(one_hot_ecoded_col)
+        if one_hot_ecoded_col in data_dict['columns_one_hot_encoded_categories'].keys():
+            one_hot_encoded_cols = data_dict['columns_one_hot_encoded_categories'][one_hot_ecoded_col]
+            value_loc = features_df.loc[0, [one_hot_ecoded_col_low]].values[0]
+            values = map_feature_value(one_hot_ecoded_col, str(value_loc) if type(value_loc) is float else value_loc.value)
+            concat_df = pd.DataFrame({ c: [v] for (c, v) in zip(one_hot_encoded_cols, values) })
+            features_df = pd.concat([features_df, concat_df], axis=1)
 
     # Dropped unused columns
-    features_df.drop(data_dict['columns_to_encode'], axis=1, inplace=True)
-
-    # Convert categorical features into dummy variables
-    # features_df = pd.get_dummies(data=features_df,
-    #                              columns=data_dict['columns_to_encode'],
-    #                              drop_first=True)
+    features_df.drop([str.lower(c) for c in data_dict['columns_to_encode']], axis=1, inplace=True)
 
     # Reorder DataFrame columns
     #features_df = features_df[data_dict['columns_after_dummy']]
 
     # Scale the data using standard scaler
-    #features_df = (features_df-data_dict['standard_scaler_mean'])/data_dict['standard_scaler_std']
+    features_df = (features_df - data_dict['standard_scaler_mean']) / data_dict['standard_scaler_std']
+
+    print('DATAFRAME COLUMNS', features_df.columns)
+    print('DATAFRAME VALUES', features_df.iloc[0].values)
 
     # Make the prediction using the trained model
     prediction = model.predict(features_df)

@@ -36,7 +36,7 @@ def map_yes_no_encoding_variables(s3_path):
             raise e
 
 
-    data_dict['yes_no_encoding_columns'] = [column_to_map]
+    data_dict['yes_no_encoding_columns'] = [column_to_map, 'hypertension', 'heart_disease']
     data_string = json.dumps(data_dict, indent=2)
 
     client.put_object(

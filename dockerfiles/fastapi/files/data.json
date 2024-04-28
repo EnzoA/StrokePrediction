@@ -2,18 +2,15 @@
   "columns_to_encode": [
     "gender",
     "work_type",
-    "smoking_status"
+    "smoking_status",
+    "Residence_type",
+    "bmi",
+    "avg_glucose_level"
   ],
-  "columns_after_one_hot_encoding": [
-    "gender_Female",
-    "gender_Male",
-    "work_type_Govt_job",
-    "work_type_Private",
-    "work_type_Self-employed",
-    "work_type_children",
-    "smoking_status_formerly smoked",
-    "smoking_status_never smoked",
-    "smoking_status_smokes"
+  "columns_drop_first": [
+    "Residence_type",
+    "bmi",
+    "avg_glucose_level"
   ],
   "columns_one_hot_encoded_categories": {
     "gender": [
@@ -30,9 +27,27 @@
       "smoking_status_formerly smoked",
       "smoking_status_never smoked",
       "smoking_status_smokes"
+    ],
+    "Residence_type": [
+      "Residence_type_Urban"
+    ],
+    "bmi": [
+      "bmi_Obese",
+      "bmi_Overweight",
+      "bmi_Underweight"
+    ],
+    "avg_glucose_level": [
+      "avg_glucose_level_High",
+      "avg_glucose_level_Low",
+      "avg_glucose_level_Normal"
     ]
   },
-  "date": "2024/04/28-15:27:56\"",
+  "date": "2024/04/28-22:37:53\"",
+  "yes_no_encoding_columns": [
+    "ever_married",
+    "hypertension",
+    "heart_disease"
+  ],
   "standard_scaler_mean": [
     43.259368730119895,
     0.09469048201614877,
