@@ -209,7 +209,7 @@ model, version_model, data_dict = load_model(EnvironmentVariables.MLFLOW_MODEL_N
 
 app = FastAPI()
 
-@app.get('/')
+#@app.get('/')
 async def read_root():
     '''
     Root endpoint of the Stroke Prediction Detector API.
@@ -218,7 +218,7 @@ async def read_root():
     '''
     return JSONResponse(content=jsonable_encoder({ 'message': 'Welcome to the Stroke Prediction Detector API' }))
 
-@app.post('/predict/', response_model=ModelOutput)
+@app.post('/', response_model=ModelOutput)
 def predict(
     features: Annotated[
         ModelInput,
@@ -250,16 +250,21 @@ def predict(
     #    features_df = pd.concat([features_df, pd.DataFrame([], one_hot_encoded_cols)], axis=1)
         
     for column in data_dict['columns_to_encode']:
-        drop_first = column in data_dict['columns_drop_first']
-        one_hot_encoded = pd.get_dummies(features_df[column], prefix=column, dtype=float, drop_first=drop_first)
+        #drop_first = column in data_dict['columns_drop_first']
+        one_hot_encoded = pd.get_dummies(features_df[column], prefix=column, dtype=float)
         features_df = pd.concat([features_df, one_hot_encoded], axis=1)
+    
+    df_columns = features_df.columns
+    for column in df_columns:
+        if column not in data_dict['columns_after_processing']:
+            features_df.drop(column, inplace=True)
 
-        features_df.drop(columns=data_dict['columns_to_encode'] + data_dict['columns_to_drop'], inplace=True)
+        #features_df.drop(columns=data_dict['columns_to_encode'] + data_dict['columns_to_drop'], inplace=True)
 
     print('DATAFRAME!!!', features_df.columns)
 
     # Dropped unused columns
-    features_df.drop(data_dict['columns_to_encode'], axis=1, inplace=True)
+    #features_df.drop(data_dict['columns_to_encode'], axis=1, inplace=True)
 
     # Convert categorical features into dummy variables
     # features_df = pd.get_dummies(data=features_df,

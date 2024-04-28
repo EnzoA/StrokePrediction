@@ -17,6 +17,9 @@ def map_yes_no_encoding_variables(s3_path):
     column_to_map = 'ever_married'
     dataset[column_to_map] = dataset[column_to_map].map({ 'Yes': 1, 'No': 0 })
 
+    final_columns = dataset.columns.to_list()
+    print(final_columns)
+
     wr.s3.to_csv(df=dataset,
                  path=s3_path,
                  index=False)
@@ -37,6 +40,8 @@ def map_yes_no_encoding_variables(s3_path):
 
 
     data_dict['yes_no_encoding_columns'] = [column_to_map]
+    data_dict['columns_after_processing'] = final_columns
+
     data_string = json.dumps(data_dict, indent=2)
 
     client.put_object(

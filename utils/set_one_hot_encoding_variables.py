@@ -28,7 +28,7 @@ def set_one_hot_encoding_variables(s3_path):
             #    columns_after_one_hot_encoding += columns_one_hot_encoded_categories[column]
         
         dataset.drop(columns=columns_to_encode + columns_to_drop, inplace=True)
-
+        
         # Write the processed dataset back to S3
         wr.s3.to_csv(df=dataset, path=s3_path, index=False)
 
@@ -47,8 +47,8 @@ def set_one_hot_encoding_variables(s3_path):
                 raise e
 
         data_dict['columns_to_encode'] = columns_to_encode
-        data_dict['columns_drop_first'] = columns_drop_first
-        data_dict['columns_to_drop'] = columns_to_drop
+        #data_dict['columns_drop_first'] = columns_drop_first
+        #data_dict['columns_to_drop'] = columns_to_drop
         #data_dict['columns_to_encode'] = [c for c in columns_to_encode if c not in columns_drop_first]
         #data_dict['columns_after_one_hot_encoding'] = columns_after_one_hot_encoding
         #data_dict['columns_dropped'] = columns_to_drop
