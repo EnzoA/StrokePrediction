@@ -33,15 +33,15 @@ def load_model(model_name: str, alias: str):
 
     try:
         # Load the trained model from MLflow
-        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL)
+        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL.value)
         client_mlflow = mlflow.MlflowClient()
 
         model_data_mlflow = client_mlflow.get_model_version_by_alias(model_name, alias)
         model_ml = mlflow.sklearn.load_model(model_data_mlflow.source)
         version_model_ml = int(model_data_mlflow.version)
-    except:
+    except Exception:
         # If there is no registry in MLflow, open the default model
-        file_ml = open(EnvironmentVariables.MODEL_PKL_LOCAL_PATH, 'rb')
+        file_ml = open(EnvironmentVariables.MODEL_PKL_LOCAL_PATH.value, 'rb')
         model_ml = pickle.load(file_ml)
         file_ml.close()
         version_model_ml = 0
@@ -50,17 +50,16 @@ def load_model(model_name: str, alias: str):
         # Load information of the ETL pipeline from S3
         s3 = boto3.client('s3')
 
-        s3.head_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON)
-        result_s3 = s3.get_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON)
+        s3.head_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON.value)
+        result_s3 = s3.get_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON.value)
         text_s3 = result_s3['Body'].read().decode()
         data_dictionary = json.loads(text_s3)
 
-        # TODO: Se necesita esto? Estará disponible?
         data_dictionary['standard_scaler_mean'] = np.array(data_dictionary['standard_scaler_mean'])
         data_dictionary['standard_scaler_std'] = np.array(data_dictionary['standard_scaler_std'])
     except:
         # If data dictionary is not found in S3, load it from local file
-        file_s3 = open(EnvironmentVariables.DATA_JSON_LOCAL_PATH, 'r')
+        file_s3 = open(EnvironmentVariables.DATA_JSON_LOCAL_PATH.value, 'r')
         data_dictionary = json.load(file_s3)
         file_s3.close()
 
@@ -81,10 +80,10 @@ def check_model():
     global version_model
 
     try:
-        model_name = 'stroke_prediction_model_prod'
+        model_name = EnvironmentVariables.MLFLOW_MODEL_NAME_PROD.value
         alias = 'champion'
 
-        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL)
+        mlflow.set_tracking_uri(EnvironmentVariables.MLFLOW_BASE_URL.value)
         client = mlflow.MlflowClient()
 
         # Check in the model registry if the version of the champion has changed
@@ -99,6 +98,56 @@ def check_model():
     except:
         # If an error occurs during the process, pass silently
         pass
+
+# TODO: Esto no debería ser manejado acá y menos con este código. Debería ser setteado y luego leído en el data.json de S3.
+def map_feature_value(feature, value):
+    feature = str.lower(feature)
+    if feature == 'gender':
+        value = str.lower(value)
+        if value == 'female':
+            return [1, 0]
+        else:
+            return [0, 1]
+    elif feature == 'work_type':
+        value = str.lower(value)
+        if value == 'govt_job':
+            return [1, 0, 0, 0]
+        elif value == 'private':
+            return [0, 1, 0, 0]
+        elif value == 'self-employed':
+            return [0, 0, 1, 0]
+        elif value == 'children':
+            return [0, 0, 0, 1]
+    elif feature == 'smoking_status':
+        value = str.lower(value)
+        if value == 'formerly smoked':
+            return [1, 0, 0]
+        elif value == 'never smoked':
+            return [0, 1, 0]
+        elif value == 'status_smokes':
+            return [0, 0, 1]
+    elif feature == 'residence_type':
+        value = str.lower(value)
+        if value == 'urban':
+            return [1]
+        else:
+            return [0]
+    elif feature == 'bmi':
+        value = float(value)
+        if value > 30:
+            return [1, 0, 0]
+        elif value >= 25 and value <= 30:
+            return [0, 1, 0]
+        else:
+            return [0, 0, 1]
+    elif feature == 'avg_glucose_level':
+        value = float(value)
+        if value > 230:
+            return [1, 0, 0]
+        elif value < 90:
+            return [0, 1, 0]
+        else:
+            return [0, 0, 1]
 
 class ModelInput(BaseModel):
     '''
@@ -205,7 +254,7 @@ class ModelOutput(BaseModel):
     }
 
 # Load the model before start
-#model, version_model, data_dict = load_model('stroke_prediction_model_prod', 'champion')
+model, version_model, data_dict = load_model(EnvironmentVariables.MLFLOW_MODEL_NAME_PROD.value, 'champion')
 
 app = FastAPI()
 
@@ -240,24 +289,28 @@ def predict(
     # Convert features into a pandas DataFrame
     features_df = pd.DataFrame(np.array(features_list).reshape([1, -1]), columns=features_key)
 
-    # TODO: Actualizar acorde al dataset.
+    # map yes no columns
+    for column_to_map in data_dict['yes_no_encoding_columns']: 
+        features_df[column_to_map] = features_df[column_to_map].map({ True: 1, False: 0 })
 
-    # Process categorical features
-    for categorical_col in data_dict['categorical_columns']:
-        features_df[categorical_col] = features_df[categorical_col].astype(int)
-        categories = data_dict['categories_values_per_categorical'][categorical_col]
-        features_df[categorical_col] = pd.Categorical(features_df[categorical_col], categories=categories)
+    # Process one-hot ecoded features
+    for one_hot_ecoded_col in data_dict['columns_to_encode']:
+        one_hot_ecoded_col_low = str.lower(one_hot_ecoded_col)
+        if one_hot_ecoded_col in data_dict['columns_one_hot_encoded_categories'].keys():
+            one_hot_encoded_cols = data_dict['columns_one_hot_encoded_categories'][one_hot_ecoded_col]
+            value_loc = features_df.loc[0, [one_hot_ecoded_col_low]].values[0]
+            values = map_feature_value(one_hot_ecoded_col, str(value_loc) if type(value_loc) is float else value_loc.value)
+            concat_df = pd.DataFrame({ c: [v] for (c, v) in zip(one_hot_encoded_cols, values) })
+            features_df = pd.concat([features_df, concat_df], axis=1)
 
-    # Convert categorical features into dummy variables
-    features_df = pd.get_dummies(data=features_df,
-                                 columns=data_dict['categorical_columns'],
-                                 drop_first=True)
+    # Dropped unused columns
+    features_df.drop([str.lower(c) for c in data_dict['columns_to_encode']], axis=1, inplace=True)
 
     # Reorder DataFrame columns
-    features_df = features_df[data_dict['columns_after_dummy']]
+    #features_df = features_df[data_dict['columns_after_dummy']]
 
     # Scale the data using standard scaler
-    features_df = (features_df-data_dict['standard_scaler_mean'])/data_dict['standard_scaler_std']
+    features_df = (features_df - data_dict['standard_scaler_mean']) / data_dict['standard_scaler_std']
 
     # Make the prediction using the trained model
     prediction = model.predict(features_df)

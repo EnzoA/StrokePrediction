@@ -1,0 +1,95 @@
+{
+  "columns_to_encode": [
+    "gender",
+    "work_type",
+    "smoking_status",
+    "Residence_type",
+    "bmi",
+    "avg_glucose_level"
+  ],
+  "columns_drop_first": [
+    "Residence_type",
+    "bmi",
+    "avg_glucose_level"
+  ],
+  "columns_one_hot_encoded_categories": {
+    "gender": [
+      "gender_Female",
+      "gender_Male"
+    ],
+    "work_type": [
+      "work_type_Govt_job",
+      "work_type_Private",
+      "work_type_Self-employed",
+      "work_type_children"
+    ],
+    "smoking_status": [
+      "smoking_status_formerly smoked",
+      "smoking_status_never smoked",
+      "smoking_status_smokes"
+    ],
+    "Residence_type": [
+      "Residence_type_Urban"
+    ],
+    "bmi": [
+      "bmi_Obese",
+      "bmi_Overweight",
+      "bmi_Underweight"
+    ],
+    "avg_glucose_level": [
+      "avg_glucose_level_High",
+      "avg_glucose_level_Low",
+      "avg_glucose_level_Normal"
+    ]
+  },
+  "date": "2024/04/28-22:37:53\"",
+  "yes_no_encoding_columns": [
+    "ever_married",
+    "hypertension",
+    "heart_disease"
+  ],
+  "standard_scaler_mean": [
+    43.259368730119895,
+    0.09469048201614877,
+    0.05676535356006851,
+    0.6598972351357965,
+    0.5864937607046734,
+    0.41350623929532665,
+    0.1291901149987766,
+    0.5686322485931,
+    0.16246635674088575,
+    0.1357964276975777,
+    0.17494494739417665,
+    0.37191093711769024,
+    0.15072180083190603,
+    0.5025691216050893,
+    0.3733790066063127,
+    0.31269880107658427,
+    0.08000978712992415,
+    0.020797651088818203,
+    0.47125030584781014,
+    0.41008074382187426
+  ],
+  "standard_scaler_std": [
+    22.639473103315016,
+    0.2927869440936501,
+    0.2313937082015605,
+    0.4737434687633465,
+    0.4924620080363182,
+    0.4924620080363182,
+    0.3354102401319606,
+    0.49526721520110223,
+    0.36887808239068504,
+    0.34257226671485574,
+    0.37992000839048395,
+    0.48331479593524923,
+    0.3577775001113028,
+    0.49999339957061256,
+    0.48370148235455684,
+    0.463592774837843,
+    0.2713083505779879,
+    0.14270637266081004,
+    0.4991727707779697,
+    0.4918480734620931
+  ]
+}

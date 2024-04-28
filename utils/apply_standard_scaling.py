@@ -33,7 +33,7 @@ def apply_standard_scaling():
         try:
             client.head_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON.value)
             result = client.get_object(Bucket='data', Key=EnvironmentVariables.S3_DATA_JSON.value)
-            text = result["Body"].read().decode()
+            text = result['Body'].read().decode()
             data_dict = json.loads(text)
         except botocore.exceptions.ClientError as e:
                 # Something else has gone wrong.
