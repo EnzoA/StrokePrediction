@@ -75,7 +75,7 @@ with DAG(dag_id='etl_process_dag',
         map_yes_no_encoding_training_variables_task = PythonVirtualenvOperator(
               task_id='yes_no_encoding_training_variables', 
               python_callable=map_yes_no_encoding_variables,
-              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TRAIN.value, 'dataset_type': 'training'},
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TRAIN.value},
               requirements=['awswrangler==3.6.0'],
               system_site_packages=True
         )
@@ -83,7 +83,7 @@ with DAG(dag_id='etl_process_dag',
         map_yes_no_encoding_testing_variables_task = PythonVirtualenvOperator(
               task_id='yes_no_encoding_testing_variables', 
               python_callable=map_yes_no_encoding_variables,
-              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TEST.value, 'dataset_type': 'testing'},
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TEST.value},
               requirements=['awswrangler==3.6.0'],
               system_site_packages=True
         )
