@@ -12,6 +12,7 @@ def set_one_hot_encoding_variables(s3_path):
         import numpy as np
         dataset = wr.s3.read_csv(s3_path)
 
+
         columns_to_encode = ['gender', 'work_type', 'smoking_status', 'Residence_type', 'bmi', 'avg_glucose_level']
         columns_drop_first = ['Residence_type', 'bmi', 'avg_glucose_level']
         columns_to_drop = ['work_type_Never_worked', 'smoking_status_Unknown']
@@ -22,9 +23,9 @@ def set_one_hot_encoding_variables(s3_path):
             drop_first = column in columns_drop_first
             one_hot_encoded = pd.get_dummies(dataset[column], prefix=column, dtype=float, drop_first=drop_first)
             dataset = pd.concat([dataset, one_hot_encoded], axis=1)
-            if column not in columns_drop_first:
-                columns_one_hot_encoded_categories[column] = [c for c in list(one_hot_encoded.columns.values) if c not in columns_to_drop]
-                columns_after_one_hot_encoding += columns_one_hot_encoded_categories[column]
+            #if column not in columns_drop_first:
+            #    columns_one_hot_encoded_categories[column] = [c for c in list(one_hot_encoded.columns.values) if c not in columns_to_drop]
+            #    columns_after_one_hot_encoding += columns_one_hot_encoded_categories[column]
         
         dataset.drop(columns=columns_to_encode + columns_to_drop, inplace=True)
 
@@ -45,12 +46,15 @@ def set_one_hot_encoding_variables(s3_path):
                 # Something else has gone wrong.
                 raise e
 
-        data_dict['columns_to_encode'] = [c for c in columns_to_encode if c not in columns_drop_first]
+        data_dict['columns_to_encode'] = columns_to_encode
+        data_dict['columns_drop_first'] = columns_drop_first
+        data_dict['columns_to_drop'] = columns_to_drop
+        #data_dict['columns_to_encode'] = [c for c in columns_to_encode if c not in columns_drop_first]
         #data_dict['columns_after_one_hot_encoding'] = columns_after_one_hot_encoding
         #data_dict['columns_dropped'] = columns_to_drop
         #data_dict['columns_drop_first'] = columns_drop_first
-        data_dict['columns_one_hot_encoded_categories'] = columns_one_hot_encoded_categories
-        data_dict['date'] = datetime.datetime.today().strftime('%Y/%m/%d-%H:%M:%S"')
+        #data_dict['columns_one_hot_encoded_categories'] = columns_one_hot_encoded_categories
+        #data_dict['date'] = datetime.datetime.today().strftime('%Y/%m/%d-%H:%M:%S"')
 
         # category_dummies_dict = {}
         # for category in columns_after_one_hot_encoding:

@@ -245,9 +245,16 @@ def predict(
         features_df[column_to_map] = features_df[column_to_map].map({ 'Yes': 1, 'No': 0 })
 
     # Process one-hot ecoded features
-    for one_hot_ecoded_col in data_dict['columns_to_encode']:
-        one_hot_encoded_cols = data_dict['columns_one_hot_encoded_categories'][one_hot_ecoded_col]
-        features_df = pd.concat([features_df, pd.DataFrame([], one_hot_encoded_cols)], axis=1)
+    #for one_hot_ecoded_col in data_dict['columns_to_encode']:
+    #    one_hot_encoded_cols = data_dict['columns_one_hot_encoded_categories'][one_hot_ecoded_col]
+    #    features_df = pd.concat([features_df, pd.DataFrame([], one_hot_encoded_cols)], axis=1)
+        
+    for column in data_dict['columns_to_encode']:
+        drop_first = column in data_dict['columns_drop_first']
+        one_hot_encoded = pd.get_dummies(features_df[column], prefix=column, dtype=float, drop_first=drop_first)
+        features_df = pd.concat([features_df, one_hot_encoded], axis=1)
+
+        features_df.drop(columns=data_dict['columns_to_encode'] + data_dict['columns_to_drop'], inplace=True)
 
     print('DATAFRAME!!!', features_df.columns)
 

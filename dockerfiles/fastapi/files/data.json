@@ -2,37 +2,23 @@
   "columns_to_encode": [
     "gender",
     "work_type",
-    "smoking_status"
+    "smoking_status",
+    "Residence_type",
+    "bmi",
+    "avg_glucose_level"
   ],
-  "columns_after_one_hot_encoding": [
-    "gender_Female",
-    "gender_Male",
-    "work_type_Govt_job",
-    "work_type_Private",
-    "work_type_Self-employed",
-    "work_type_children",
-    "smoking_status_formerly smoked",
-    "smoking_status_never smoked",
-    "smoking_status_smokes"
+  "columns_drop_first": [
+    "Residence_type",
+    "bmi",
+    "avg_glucose_level"
   ],
-  "columns_one_hot_encoded_categories": {
-    "gender": [
-      "gender_Female",
-      "gender_Male"
-    ],
-    "work_type": [
-      "work_type_Govt_job",
-      "work_type_Private",
-      "work_type_Self-employed",
-      "work_type_children"
-    ],
-    "smoking_status": [
-      "smoking_status_formerly smoked",
-      "smoking_status_never smoked",
-      "smoking_status_smokes"
-    ]
-  },
-  "date": "2024/04/28-15:27:56\"",
+  "columns_to_drop": [
+    "work_type_Never_worked",
+    "smoking_status_Unknown"
+  ],
+  "yes_no_encoding_columns": [
+    "ever_married"
+  ],
   "standard_scaler_mean": [
     43.259368730119895,
     0.09469048201614877,
