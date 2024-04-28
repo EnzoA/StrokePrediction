@@ -59,7 +59,7 @@ with DAG(dag_id='etl_process_dag',
         set_one_hot_encoding_training_variables_task = PythonVirtualenvOperator(
               task_id='one_hot_encoding_training_variables', 
               python_callable=set_one_hot_encoding_variables,
-              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TRAIN.value, 'dataset_type': 'training'},
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TRAIN.value},
               requirements=['awswrangler==3.6.0'],
               system_site_packages=True
         )
@@ -67,7 +67,7 @@ with DAG(dag_id='etl_process_dag',
         set_one_hot_encoding_testing_variables_task = PythonVirtualenvOperator(
               task_id='one_hot_encoding_testing_variables', 
               python_callable=set_one_hot_encoding_variables,
-              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TEST.value, 'dataset_type': 'testing'},
+              op_kwargs={'s3_path': EnvironmentVariables.S3_X_TEST.value},
               requirements=['awswrangler==3.6.0'],
               system_site_packages=True
         )

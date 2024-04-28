@@ -241,21 +241,25 @@ def predict(
     features_df = pd.DataFrame(np.array(features_list).reshape([1, -1]), columns=features_key)
 
     # Process one-hot ecoded features
-    for one_hot_ecoded_col in data_dict['columns_one_hot_encoded']:
-        features_df[one_hot_ecoded_col] = features_df[one_hot_ecoded_col].astype(int)
-        categories = data_dict['dummy_values_per_one_hot_encoded'][one_hot_ecoded_col]
-        features_df[one_hot_ecoded_col] = pd.Categorical(features_df[one_hot_ecoded_col], categories=categories)
+    for one_hot_ecoded_col in data_dict['columns_to_encode']:
+        one_hot_encoded_cols = data_dict['columns_one_hot_encoded_categories'][one_hot_ecoded_col]
+        features_df = pd.concat([features_df, pd.DataFrame([], one_hot_encoded_cols)], axis=1)
+
+    print('DATAFRAME!!!', features_df.columns)
+
+    # Dropped unused columns
+    features_df.drop(data_dict['columns_to_encode'], axis=1, inplace=True)
 
     # Convert categorical features into dummy variables
-    features_df = pd.get_dummies(data=features_df,
-                                 columns=data_dict['columns_one_hot_encoded'],
-                                 drop_first=True)
+    # features_df = pd.get_dummies(data=features_df,
+    #                              columns=data_dict['columns_to_encode'],
+    #                              drop_first=True)
 
     # Reorder DataFrame columns
-    features_df = features_df[data_dict['columns_after_dummy']]
+    #features_df = features_df[data_dict['columns_after_dummy']]
 
     # Scale the data using standard scaler
-    features_df = (features_df-data_dict['standard_scaler_mean'])/data_dict['standard_scaler_std']
+    #features_df = (features_df-data_dict['standard_scaler_mean'])/data_dict['standard_scaler_std']
 
     # Make the prediction using the trained model
     prediction = model.predict(features_df)
