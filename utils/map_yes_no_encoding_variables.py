@@ -1,4 +1,4 @@
-def map_yes_no_encoding_variables(s3_path, dataset_type):
+def map_yes_no_encoding_variables(s3_path):
     '''
     Maps binary yes-no variables into a numerical 1-0 representation.
     '''
@@ -35,7 +35,7 @@ def map_yes_no_encoding_variables(s3_path, dataset_type):
             # Something else has gone wrong.
             raise e
 
-    data_dict['date'] = datetime.datetime.today().strftime('%Y/%m/%d-%H:%M:%S"')
+    data_dict['yes_no_encoding_columns'] = [column_to_map]
     data_string = json.dumps(data_dict, indent=2)
 
     client.put_object(

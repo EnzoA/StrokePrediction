@@ -243,6 +243,9 @@ def predict(
     # TODO: Actualizar acorde al dataset.
 
     # Process categorical features
+    for column_to_map in data_dict['yes_no_encoding_columns']: 
+        features_df[column_to_map] = features_df[column_to_map].map({ 'Yes': 1, 'No': 0 })
+
     for categorical_col in data_dict['categorical_columns']:
         features_df[categorical_col] = features_df[categorical_col].astype(int)
         categories = data_dict['categories_values_per_categorical'][categorical_col]
