@@ -8,16 +8,27 @@ Link al dataset usado para el trabajo: [https://www.kaggle.com/datasets/fedesori
 A continuación, se detallan las columnas del dataset:
 
 1- id-Patient ID
+
 2- gender-Gender of Patient
+
 3- age-Age of Patient
+
 4- hypertension-0 - no hypertension, 1 - suffering from hypertension
+
 5- heart_disease-0 - no heart disease, 1 - suffering from heart disease
+
 6- ever_married-Yes/No
+
 7- work_type-Type of occupation
+
 8- Residence_type-Area type of residence (Urban/ Rural)
+
 9- avg_glucose_level-Average Glucose level (measured after meal)
+
 10- bmi-Body mass index
+
 11- smoking_status-patient’s smoking status
+
 12- stroke-0 - no stroke, 1 - suffered stroke
 
 
@@ -28,15 +39,19 @@ La TP incluye:
     -DAG que obtiene los datos del repositorio, realiza limpieza y 
      feature engineering, y guarda en el bucket `s3://data` los datos separados para entrenamiento 
      y pruebas. MLflow hace seguimiento de este procesamiento.
+
      ![MINIO](Minio.png)
+
     -DAG de entrenamiento y reentrenamiento con la capacidad de detectar si hay modelo registrado, si existe entrena y registra el modelo inicial
      de lo contrario hace reentrenamiento y registro del nuevo modelo en caso de que las metricas sean mejores que el modelo actual, todo con registro del 
      proceso en MLFLOW.
      
 - Un servicio de API del modelo, que toma el artefacto de MLflow y lo expone para realizar predicciones.
+
     ![FasTAPI](FastAPI.png)
 
 Diagrama de la implementacion
+
 ![Arquitectura](Arquitectura.png)
 
 
