@@ -40,7 +40,7 @@ La TP incluye:
      feature engineering, y guarda en el bucket `s3://data` los datos separados para entrenamiento 
      y pruebas. MLflow hace seguimiento de este procesamiento.
 
-     ![MINIO](Minio.png)
+
 
     -DAG de entrenamiento y reentrenamiento con la capacidad de detectar si hay modelo registrado, si existe entrena y registra el modelo inicial
      de lo contrario hace reentrenamiento y registro del nuevo modelo en caso de que las metricas sean mejores que el modelo actual, todo con registro del 
@@ -48,11 +48,10 @@ La TP incluye:
      
 - Un servicio de API del modelo, que toma el artefacto de MLflow y lo expone para realizar predicciones.
 
-    ![FasTAPI](FastAPI.png)
+
 
 Diagrama de la implementacion
 
-![Arquitectura](Arquitectura.png)
 
 
 ## Revision de  Funcionamiento
@@ -64,7 +63,7 @@ llamado `etl_process.py`, de esta manera se crearán los datos en el
 bucket `s3://data`.
 2. Ejecuta la notebook (ubicada en `train_the_model.py`) para realizar el entrenamiento 
 del modelo inicial.
-![DAG](DAG_airflow.png)
+
 3. Utiliza el servicio de API.
 
 Además, una vez entrenado el modelo, puedes ejecutar el DAG `train_the_model.py` para probar 
