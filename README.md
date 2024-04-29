@@ -59,16 +59,16 @@ Diagrama de la implementacion
 Los pasos para revisar el funcionamiento son los siguientes:
 
 1. Al momento de tener arriba el sistema multicontenedor, ejecuta en Airflow el DAG 
-llamado `etl_process.py`, de esta manera se crearán los datos en el 
+llamado `etl_process`, de esta manera se crearán los datos en el 
 bucket `s3://data`.
-2. Ejecuta la notebook (ubicada en `train_the_model.py`) para realizar el entrenamiento 
+2. Ejecuta el DAG (ubicada en `train_the_model`) para realizar el entrenamiento 
 del modelo inicial.
 
 3. Utiliza el servicio de API.
 
-Además, una vez entrenado el modelo, puedes ejecutar el DAG `train_the_model.py` para probar 
+Además, una vez entrenado el modelo, puedes ejecutar el DAG `train_the_model` para probar 
 un nuevo modelo que compita con el modelo actual(Champion). Antes de hacer esto, ejecuta el DAG 
-`etl_process.py` para que el conjunto de datos sea nuevo.
+`etl_process` para que el conjunto de datos sea nuevo.
 
 ### API 
 
