@@ -50,9 +50,6 @@ La TP incluye:
 
 
 
-Diagrama de la implementacion
-
-
 
 ## Revision de  Funcionamiento
 
